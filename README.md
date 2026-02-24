@@ -35,7 +35,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    虚拟机（VMware）                          │
+│                    虚拟机（Ubuntu 24.04）                   │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │ 键盘控制节点  │  │ Cartographer │  │    Nav2      │     │
 │  │key_control   │  │    SLAM      │  │  自主导航     │     │
@@ -323,6 +323,62 @@ raspberrypi-ros2-car/
 
   - 安装完成在终端输入 `ros2` 验证是否安装成功。
 
+- **虚拟机**中安装相关依赖：
+
+  - **虚拟机**中新建终端运行：
+
+    ```bash
+    sudo apt-get update
+  
+    # 安装机器人模型依赖
+    sudo apt install ros-jazzy-joint-state-publisher-gui 
+    sudo apt install ros-jazzy-robot-state-publisher
+  
+    # 安装 Cartographer 依赖
+    sudo apt-get install -y ros-jazzy-cartographer-*
+  
+    # 安装 Nav2 依赖
+    sudo apt install -y ros-jazzy-navigation2
+    sudo apt install -y ros-jazzy-nav2-bringup
+    ```
+
+- **树莓派**中USB设备号固定别名：
+
+  - 虚拟机中远程访问树莓派终端运行：
+
+    ```bash
+    # 查看USB转TTL的ID
+    lsusb
+    
+    # 输出示例：
+    # Bus 001 Device 014: ID 1a86:7523 QinHeng Electronics CH340 serial converter
+    
+    # 创建并编写规则文件
+    # 激光雷达固定别名
+    sudo touch /etc/udev/rules.d/laser_scan.rules
+    sudo nano /etc/udev/rules.d/laser_scan.rules
+    
+    # 修改以下内容中的"1a86"和"7523"为实际的USB设备ID并复制到文件中保存
+    KERNEL=="ttyUSB0", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0777", SYMLINK+="laser_scan"
+    
+    # stm32固定别名
+    sudo touch /etc/udev/rules.d/stm32_dev.rules
+    sudo nano /etc/udev/rules.d/stm32_dev.rules
+    
+    # 修改以下内容中的"1a86"和"7523"为实际的USB设备ID并复制到文件中保存
+    KERNEL=="ttyUSB1", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0777", SYMLINK+="stm32_dev"
+    
+    # 重新加载和应用规则
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    
+    # 检查别名是否生效
+    ls -l /dev/ | grep laser_scan
+    ls -l /dev/ | grep stm32_dev
+    ```
+
+  - **注意**：USB设备ID需要固定，并且要确保上电后先插入激光雷达USB（ttyUSB0），再插入STM32USB（ttyUSB1），否则每次重启树莓派都需要重新设置别名。
+
 ### 4. STM32开发环境
 
 - 下载并安装：[STM32CubeIDE](https://www.st.com.cn/zh/development-tools/stm32cubeide.html)。
@@ -453,9 +509,6 @@ raspberrypi-ros2-car/
     cd ~/vmware_ws/
     source install/setup.bash
     ros2 launch car_pkg car_nav.launch.py
-    
-    # 启动Rviz2
-    rviz2
     
     # 在RViz2中：
     # 1. 使用 "2D Pose Estimate" 设置初始位姿
