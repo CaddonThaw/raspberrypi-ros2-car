@@ -83,7 +83,7 @@ raspberrypi-ros2-car/
 │       │   └── OLED/         # OLED显示
 │       └── Drivers/          # STM32 HAL驱动
 │
-├── ubuntu_workspace/
+├── workspace/
 │   ├── raspberrypi_ws/       # 树莓派工作空间
 │   │   └── src/
 │   │       ├── car_pkg/      # 小车底盘功能包
@@ -421,7 +421,7 @@ raspberrypi-ros2-car/
     git clone https://github.com/CaddonThaw/raspberrypi-ros2-car.git
     
     # 创建树莓派工作空间
-    cp ~/raspberrypi-ros2-car/ubuntu_workspace/raspberrypi_ws ~/
+    cp ~/raspberrypi-ros2-car/workspace/raspberrypi_ws ~/
     
     # 进入树莓派工作空间
     cd ~/raspberrypi_ws
@@ -443,7 +443,7 @@ raspberrypi-ros2-car/
     git clone https://github.com/CaddonThaw/raspberrypi-ros2-car.git
     
     # 创建树莓派工作空间
-    cp ~/raspberrypi-ros2-car/ubuntu_workspace/vmware_ws ~/
+    cp ~/raspberrypi-ros2-car/workspace/vmware_ws ~/
     
     # 进入虚拟机工作空间
     cd ~/vmware_ws
